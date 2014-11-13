@@ -13,6 +13,7 @@
 
 #include <fstream>
 
+#include "../Mecanismos_Concu/Mensajes/Mensaje.h"
 #include "../Constantes.h"
 
 class Archivo{
@@ -20,6 +21,8 @@ class Archivo{
 private:
 	std::string ruta;
 	std::fstream arch;
+
+	Mensaje parsear(std::string registro);
 public:
 
 	Archivo(std::string ruta);
@@ -27,7 +30,7 @@ public:
 	int abrir();
 	int cerrar();
 
-	std::string buscarRegistro (std::string clave);
+	Mensaje buscarRegistro (std::string clave);
 	int agregarRegistro (std::string regNuevo);
 
 };

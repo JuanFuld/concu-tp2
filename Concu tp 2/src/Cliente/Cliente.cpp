@@ -1,102 +1,96 @@
 #include "Cliente.h"
 
-
-Cliente :: Cliente () {
-	
+Cliente::Cliente() {
 	this->claveUnicaCliente = 0;
-
 	this->coordClaveUnica = new MemoriaCompartida<int>();
 	this->coordClaveUnica->crear(ARCHIVO_SHMEM, CLAVE_SHMEM);
 	
 	//obtiene su clave unica par alos mensajes y actualiza la memoria compartida al nuevo valor
-	this->lockClave = new  LockFile ( ARCHIVO_FLOCK );
+	this->lockClave = new  LockFile(ARCHIVO_FLOCK);
 	
 	this->lockClave->tomarLock();
 	this->claveUnicaCliente = coordClaveUnica->leer();
-	if (this->claveUnicaCliente == 0){
+	if (this->claveUnicaCliente == 0) {
 		//para inicializar fuera del rango que el servidor toma como mensajes hacia el
 		this->claveUnicaCliente = 100;
-	}else{
+	} else {
 		this->claveUnicaCliente ++;
 	}
 	this->coordClaveUnica->escribir(claveUnicaCliente);
 	this->lockClave->liberarLock();
 		
-
-	this->cola = new Cola<Mensaje> ( ARCHIVO_COLA,CLAVE_COLA );
+	this->cola = new Cola<Mensaje>(ARCHIVO_COLA, CLAVE_COLA);
 }
 
 Cliente :: ~Cliente() {
-	//TODO if ptr != null aca y tambien en los deletes de los otros metodos
-	
 	if (lockClave != NULL){
-		delete this->lockClave;
-		this->lockClave = NULL;
+		delete lockClave;
+		lockClave = NULL;
 	}
 	
-	if (this->coordClaveUnica != NULL){
-		this->coordClaveUnica->liberar();
-		delete this->coordClaveUnica;
-		this->coordClaveUnica = NULL;
+	if (coordClaveUnica != NULL){
+		coordClaveUnica->liberar();
+		delete coordClaveUnica;
+		coordClaveUnica = NULL;
 	}
 
-	if (this->cola != NULL){
-		this->cola->destruir ();
-		delete this->cola;
-		this->cola = NULL;
+	if (cola != NULL){
+		//this->cola->destruir();
+		delete cola;
+		cola = NULL;
 	}
 }
 
 
-int Cliente :: pedirInformacion ( const std::string nombre ){
-	//esto es por si alguien mas termino y borro la cola
-	delete this->cola;
-	this->cola = new Cola<Mensaje> ( ARCHIVO_COLA,CLAVE_COLA );
+int Cliente::pedirInformacion (const std::string nombre) {
+	if (!cola->existe()) {
+		std::cout << "No se puede comunicar con el servidor. Posiblemente se cerró." << std::endl;
+		return -1;
+	}
 
-
-	this->mensaje.mtype = PEDIDO;
-	
+	mensaje.mtype = PEDIDO;
 	/*le paso a la base de datos:
 	* a quien contestarle
 	* el nombre de por quien pregunto
 	*/
+	mensaje.clave = claveUnicaCliente;
+	strcpy(mensaje.nombre, nombre.c_str());
 	
-	this->mensaje.clave = claveUnicaCliente;
-	strcpy ( this->mensaje.nombre, nombre.c_str() );
-	
-	this->cola->escribir ( this->mensaje );
+	cola->escribir(mensaje);
 	
 	return 0;
 }
 
 int Cliente :: esperarRespuesta (){
-	//esto es por si alguien mas termino y borro la cola
-	delete this->cola;
-	this->cola = new Cola<Mensaje> ( ARCHIVO_COLA,CLAVE_COLA );
+	if (!cola->existe()) {
+		std::cout << "No se puede comunicar con el servidor. Posiblemente se cerró." << std::endl;
+		return -1;
+	}
 
-	this->cola->leer ( this->claveUnicaCliente, &this->mensaje );
+	cola->leer(this->claveUnicaCliente, &mensaje);
 	
 	std::cout << "Mensaje recibido: " <<
-			this->mensaje.nombre + SEPARADOR +
-			this->mensaje.direccion + SEPARADOR +
-			this->mensaje.telefono
+			mensaje.nombre + SEPARADOR +
+			mensaje.direccion + SEPARADOR +
+			mensaje.telefono
 			<< std::endl;
 	
 	return 0;
 }
 
-int Cliente :: agregarRegistro ( const std::string nombre, const std::string telefono, const std::string direccion ){
-	//esto es por si alguien mas termino y borro la cola
-	delete this->cola;
-	this->cola = new Cola<Mensaje> ( ARCHIVO_COLA,CLAVE_COLA );
+int Cliente::agregarRegistro(const std::string nombre, const std::string telefono, const std::string direccion) {
+	if (!cola->existe()) {
+		std::cout << "No se puede comunicar con el servidor. Posiblemente se cerró." << std::endl;
+		return -1;
+	}
 
-	this->mensaje.mtype = AGREGAR;
+	mensaje.mtype = AGREGAR;
 
-	strcpy ( this->mensaje.nombre, nombre.c_str() );
-	strcpy ( this->mensaje.telefono, telefono.c_str() );
-	strcpy ( this->mensaje.direccion, direccion.c_str() );
+	strcpy(mensaje.nombre, nombre.c_str());
+	strcpy(mensaje.telefono, telefono.c_str());
+	strcpy(mensaje.direccion, direccion.c_str());
 	
-	this->cola->escribir ( this->mensaje );
+	cola->escribir(mensaje);
 	
 	return 0;
 }

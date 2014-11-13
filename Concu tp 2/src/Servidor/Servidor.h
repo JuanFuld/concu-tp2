@@ -20,11 +20,11 @@ class Servidor {
 	private:
 		Cola<Mensaje>* cola;
 		Mensaje peticionRecibida;
-		Mensaje respuesta;
 		Archivo* baseDeDatos;
 
 		int procesarPedidoInfo();
 		int procesarAgregado();
+		int responder(int numeroCliente, Mensaje& respuesta);
 
 	public:
 		Servidor ();
