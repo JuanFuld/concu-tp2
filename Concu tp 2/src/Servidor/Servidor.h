@@ -9,9 +9,9 @@
 #include <string.h>
 #include <sstream>
 
-#include "../Mensajes/Mensaje.h"
-#include "../Mensajes/Cola.h"
-#include "../Archivo.h"
+#include "../Mecanismos_Concu/Mensajes/Mensaje.h"
+#include "../Mecanismos_Concu/Mensajes/Cola.h"
+#include "../BaseDeDatos/Archivo.h"
 
 #include "../Constantes.h"
 

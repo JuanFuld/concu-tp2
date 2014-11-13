@@ -5,8 +5,8 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-#include "../Seniales/SIGINT_Handler.h"
-#include "../Seniales/SignalHandler.h"
+#include "../Mecanismos_Concu/Seniales/SIGINT_Handler.h"
+#include "../Mecanismos_Concu/Seniales/SignalHandler.h"
 
 #include "Servidor.h"
 #include "../Constantes.h"

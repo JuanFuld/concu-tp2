@@ -8,10 +8,10 @@
 #include <string.h>
 #include <sstream>
 
-#include "../Mensajes/Cola.h"
-#include "../Mensajes/Mensaje.h"
-#include "../Locks/LockFile.h"
-#include "../Memoria_Compartida/MemoriaCompartida.h"
+#include "../Mecanismos_Concu/Mensajes/Cola.h"
+#include "../Mecanismos_Concu/Mensajes/Mensaje.h"
+#include "../Mecanismos_Concu/Locks/LockFile.h"
+#include "../Mecanismos_Concu/Memoria_Compartida/MemoriaCompartida.h"
 
 #include "../Constantes.h"
 

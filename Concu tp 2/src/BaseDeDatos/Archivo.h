@@ -13,7 +13,7 @@
 
 #include <fstream>
 
-#include "Constantes.h"
+#include "../Constantes.h"
 
 class Archivo{
 

@@ -1,15 +1,15 @@
 CC = g++
 CFLAGS = -Wall -Wpedantic
 
-INC = $(.) $(./Locks) $(./Cliente) $(./Memoria_Compartida) $(./Seniales) $(./Mensajes)
+INC = $(.) $(./Mecanismos_Concu/Locks) $(./Mecanismos_Concu/Cliente) $(./Mecanismos_Concu/Memoria_Compartida) $(./Mecanismos_Concu/Seniales) $(./Mecanismos_Concu/Mensajes)
 INC_PARAMS = $(foreach d, $(INC), -I$d)
 
-MEM = ./Memoria_Compartida/MemoriaCompartida.h
+MEM = ./Mecanismos_Concu/Memoria_Compartida/MemoriaCompartida.h
 CONST = Constantes.h
-SIG = ./Seniales/SignalHandler.h
-SIG2 = ./Seniales/SIGINT_Handler.h
-MSJS = ./Mensajes/Cola.h
-MSJS2 = ./Mensajes/Mensaje.h
+SIG = ./Mecanismos_Concu/Seniales/SignalHandler.h
+SIG2 = ./Mecanismos_Concu/Seniales/SIGINT_Handler.h
+MSJS = ./Mecanismos_Concu/Mensajes/Cola.h
+MSJS2 = ./Mecanismos_Concu/Mensajes/Mensaje.h
 
 
 DEPS_CLIENTE =  $(CONST)
@@ -39,19 +39,19 @@ MCliente.o: Cliente/main.cpp Cliente/Cliente.h $(DEPS_CLIENTE)
 MServidor.o: Servidor/main.cpp Servidor/Servidor.h $(DEPS_SERVER)
 	$(CC) $(CFLAGS) -c $< -o $@ $(INC_PARAMS) -DSERVIDOR
 
-Cliente.o: Cliente/Cliente.cpp Cliente/Cliente.h Constantes.h Mensajes/Mensaje.h Mensajes/Cola.h Locks/LockFile.h Memoria_Compartida/MemoriaCompartida.h
+Cliente.o: Cliente/Cliente.cpp Cliente/Cliente.h Constantes.h Mecanismos_Concu/Mensajes/Mensaje.h Mecanismos_Concu/Mensajes/Cola.h Mecanismos_Concu/Locks/LockFile.h Mecanismos_Concu/Memoria_Compartida/MemoriaCompartida.h
 	$(CC) $(CFLAGS) -c $< -o $@ $(INC_PARAMS)
 
-Servidor.o: Servidor/Servidor.cpp Servidor/Servidor.h Constantes.h Mensajes/Mensaje.h Mensajes/Cola.h Archivo.h
+Servidor.o: Servidor/Servidor.cpp Servidor/Servidor.h Constantes.h Mecanismos_Concu/Mensajes/Mensaje.h Mecanismos_Concu/Mensajes/Cola.h ./BaseDeDatos/Archivo.h
 	$(CC) $(CFLAGS) -c $< -o $@ $(INC_PARAMS)
 
-Archivo.o: Archivo.cpp Archivo.h Constantes.h
+Archivo.o: ./BaseDeDatos/Archivo.cpp ./BaseDeDatos/Archivo.h Constantes.h
 	$(CC) $(CFLAGS) -c $< -o $@ $(INC_PARAMS)
 
-SignalHandler.o: ./Seniales/SignalHandler.cpp $(SIG) ./Seniales/EventHandler.h ./Seniales/SIGINT_Handler.h
+SignalHandler.o: ./Mecanismos_Concu/Seniales/SignalHandler.cpp $(SIG) ./Mecanismos_Concu/Seniales/EventHandler.h ./Mecanismos_Concu/Seniales/SIGINT_Handler.h
 	$(CC) $(CFLAGS) -c $< -o $@ $(INC_PARAMS)
 
-LockFile.o: ./Locks/LockFile.cpp ./Locks/LockFile.h
+LockFile.o: ./Mecanismos_Concu/Locks/LockFile.cpp ./Mecanismos_Concu/Locks/LockFile.h
 	$(CC) $(CFLAGS) -c $< -o $@ $(INC_PARAMS)
 
 
