@@ -42,19 +42,19 @@ endif
 # Add inputs and outputs from these tool invocations to the build variables 
 
 # All Target
-all: TP2\ Concurrentes
+all: Concu\ tp\ 2
 
 # Tool invocations
-TP2\ Concurrentes: $(OBJS) $(USER_OBJS)
+Concu\ tp\ 2: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C++ Linker'
-	g++  -o "TP2 Concurrentes" $(OBJS) $(USER_OBJS) $(LIBS)
+	g++  -o "Concu tp 2" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) $(OBJS)$(C++_DEPS)$(C_DEPS)$(CC_DEPS)$(CPP_DEPS)$(EXECUTABLES)$(CXX_DEPS)$(C_UPPER_DEPS) "TP2 Concurrentes"
+	-$(RM) $(OBJS)$(C++_DEPS)$(C_DEPS)$(CC_DEPS)$(CPP_DEPS)$(EXECUTABLES)$(CXX_DEPS)$(C_UPPER_DEPS) "Concu tp 2"
 	-@echo ' '
 
 .PHONY: all clean dependents

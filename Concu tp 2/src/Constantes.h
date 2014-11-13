@@ -4,7 +4,7 @@
 #include "string.h"
 
 static const std::string ARCHIVO_COLA = "/etc";
-static const std::string ARCHIVO_FLOCK = "LockFile.h";
+static const std::string ARCHIVO_FLOCK = "./Locks/LockFile.h";
 static const std::string ARCHIVO_SHMEM = "/etc";
 
 static const int CLAVE_COLA = 10; 

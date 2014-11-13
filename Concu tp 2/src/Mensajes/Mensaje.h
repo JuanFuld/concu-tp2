@@ -3,7 +3,7 @@
 
 #include "../Constantes.h"
 
-typedef struct Mensaje {
+struct Mensaje {
 	long mtype;
 	int clave;
 	char nombre[LONG_MAX_NOMBRE];

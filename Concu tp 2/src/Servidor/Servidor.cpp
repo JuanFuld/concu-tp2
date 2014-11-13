@@ -68,8 +68,8 @@ int Servidor :: procesarPedidoInfo(){
 	int posSeparador2 = textoRespuesta.rfind(SEPARADOR);
 
 	nombre = textoRespuesta.substr(0,posSeparador);
-	tel = textoRespuesta.substr(posSeparador + 1, posSeparador2 - (posSeparador + 1) );
-	dir = textoRespuesta.substr(posSeparador2);
+	dir = textoRespuesta.substr(posSeparador + 1, posSeparador2 - posSeparador - 1 );
+	tel = textoRespuesta.substr(posSeparador2 + 1);
 
 	//responde
 	this->respuesta.mtype = numeroCliente;
@@ -85,7 +85,7 @@ int Servidor :: procesarPedidoInfo(){
 int Servidor :: procesarAgregado(){
 	//parsea el mensaje recibido
 	std::string textoPeticion = peticionRecibida.nombre + SEPARADOR +
-			peticionRecibida.telefono + SEPARADOR + peticionRecibida.direccion + NEWLINE;
+			peticionRecibida.direccion + SEPARADOR + peticionRecibida.telefono + NEWLINE;
 
 	baseDeDatos->agregarRegistro(textoPeticion);
 
