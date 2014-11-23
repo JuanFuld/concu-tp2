@@ -1,18 +1,32 @@
 #include "Servidor.h"
+#include "../Constantes.h"
+#include <cstring>
+
+using namespace std;
 
 Servidor::Servidor() {
-	cola = new Cola<Mensaje>(ARCHIVO_COLA, CLAVE_COLA);
-	baseDeDatos = new Archivo(RUTA_BASE_DE_DATOS);
-	if (baseDeDatos != NULL)
-		baseDeDatos->abrir();
-	//TODO aca y en el cliente ver si, o como, inicializar los mensajes
+	colaArrivos = new Cola<Mensaje>();
+	if (colaArrivos != NULL) {
+		colaArrivos->crear(ARCHIVO_COLA,CLAVE_COLA);
+	}
+	colaEnvios = new Cola<Mensaje>();
+	if (colaEnvios != NULL) {
+		colaEnvios->crear(ARCHIVO_COLA,CLAVE_COLA);
+	}
+	baseDeDatos = new BaseDeDatos(RUTA_BASE_DE_DATOS);
+	// TODO aca y en el cliente ver si, o como, inicializar los mensajes
 }
 
 Servidor::~Servidor() {
-	if (cola != NULL) {
-		cola->destruir();
-		delete cola;
-		cola = NULL;
+	if (colaArrivos != NULL) {
+		colaArrivos->destruir(); // Solo el Servidor la destruye
+		delete colaArrivos;
+		colaArrivos = NULL;
+	}
+	if (colaEnvios != NULL) {
+		colaEnvios->destruir(); // Solo el Servidor la destruye
+		delete colaEnvios;
+		colaEnvios = NULL;
 	}
 	if (baseDeDatos != NULL) {
 		baseDeDatos->cerrar();
@@ -23,74 +37,107 @@ Servidor::~Servidor() {
 
 
 int Servidor::procesarPedido() {
-	if (cola == NULL) {
-		std::cout << "Cola era NULL" << std::endl;
+
+	std::cout << "Esperando pedido..." << endl;
+
+	if (colaArrivos->leer(0, &peticionRecibida) == -1) {
+		std::cout << "Error al leer en la cola" << std::endl;
 		return -1;
 	}
 
-	//lee alguna peticion, con prioridad a los pedidos de informacion
-	//esto obliga que pedido tenga un numero menor a agregar
-	//todo preguntar si es valido
-	if (cola->leer(-AGREGAR, &peticionRecibida) == -1) {
-		std::cout << "Error de algun tipo al leer en la cola" << std::endl;
-		return -1;
-	}
+	respuesta.mtype = peticionRecibida.mtype; // Responde a quien lo contacto
+	strcpy(respuesta.nombre, peticionRecibida.nombre);
 
-	switch (peticionRecibida.mtype) {
-		case PEDIDO:
-			procesarPedidoInfo();
+	switch (peticionRecibida.op) {
+		case CONSULTA:
+			procesarConsulta();
 			break;
-		case AGREGAR:
+		case AGREGADO:
 			procesarAgregado();
 			break;
 		default:
-			std::cout << "El servidor recibió un mensaje inválido, no será procesado." << std::endl;
-			//todo guardar mensaje en arch errores
-			std::cout << peticionRecibida.mtype << std::endl;
+			std::cout << "El servidor recibió una operación invalida, no será procesado." << std::endl;
+			std::cout << peticionRecibida.op << std::endl;
 			return -1;
 	}
 	return 0;
 }
 
-//TODO this . o -> por TODOS lados
-int Servidor::procesarPedidoInfo() {
-	if (cola == NULL) {
-		std::cout << "Cola era NULL" << std::endl;
-		return -1;
-	}
+void Servidor::parsear(string registro) {
+	//parsea el registro recibido
+	string tel, dir;
 
-	//obtiene el numero de cliente para saber a quien contestarle
-	int numeroCliente = peticionRecibida.clave;
+	int posSeparador = registro.find(SEPARADOR);
+	int posSeparador2 = registro.rfind(SEPARADOR);
+
+	dir = registro.substr(posSeparador + 1, posSeparador2 - posSeparador - 1 );
+	tel = registro.substr(posSeparador2 + 1);
+
+	strcpy(respuesta.direccion, dir.c_str());
+	strcpy(respuesta.telefono, tel.c_str());
+}
+
+int Servidor::procesarConsulta() {
 	//obtiene nombre a buscar en la base de datos
-	std::string nombreABuscar = peticionRecibida.nombre;
+	string nombreABuscar = peticionRecibida.nombre;
+
+	cout << "Recibida operación CONSULTA del Cliente: " << peticionRecibida.mtype << endl;
+	cout << "Mensaje recibido: "<< endl;
+/*	cout << "    mtype:  " << peticionRecibida.mtype << endl;
+	cout << "    op:     " << peticionRecibida.op << endl;
+	cout << "    status: " << peticionRecibida.status << endl;*/
+	cout << "    Nombre: " << peticionRecibida.nombre << endl;
+/*	cout << "    Dir:    " << peticionRecibida.direccion << endl;
+	cout << "    Tel:    " << peticionRecibida.telefono << endl;*/
 
 	//obtiene la informacion requerida de la base de datos
-	Mensaje respuesta = baseDeDatos->buscarRegistro(nombreABuscar);
-	if (respuesta == NULL) {
-		// TODO: No se encontro el registro
-		return -1;
+	int existe = NOEXISTE;
+	string registro = baseDeDatos->obtenerRegistro(nombreABuscar);
+	if (!registro.compare("") == 0) {
+		existe = EXISTE;
+		parsear(registro);
 	}
 
 	//responde
-	int res = responder(numeroCliente, respuesta);
-	// TODO: control de errores aca
+	if (responder(existe) == -1) {
+		cout << "Error al intentar responder al Cliente " << peticionRecibida.mtype << endl;
+		return -1;
+	}
 
 	return 0;
 }
 
-int Servidor::responder(int numeroCliente, Mensaje& respuesta) {
-	respuesta.mtype = numeroCliente; // TODO: seguro es en el mtype?
-	return cola->escribir(respuesta);
+int Servidor::responder(int existe) {
+	respuesta.status = existe;
+	respuesta.op = RESPUESTA;
+
+	cout << "Respondiendo al Cliente: " << respuesta.mtype << endl;
+
+	return colaEnvios->escribir(respuesta);
 }
 
-int Servidor :: procesarAgregado(){
-	//parsea el mensaje recibido
-	std::string textoPeticion = peticionRecibida.nombre + SEPARADOR +
+int Servidor::procesarAgregado() {
+	cout << "Recibida operación AGREGADO del Cliente: " << peticionRecibida.mtype << endl;
+	cout << "Mensaje recibido: "<< endl;
+/*	cout << "    mtype:  " << peticionRecibida.mtype << endl;
+	cout << "    op:     " << peticionRecibida.op << endl;
+	cout << "    status: " << peticionRecibida.status << endl;
+*/
+	cout << "    Nombre: " << peticionRecibida.nombre << endl;
+	cout << "    Dir:    " << peticionRecibida.direccion << endl;
+	cout << "    Tel:    " << peticionRecibida.telefono << endl;
+
+	string textoPeticion = peticionRecibida.nombre + SEPARADOR +
 			peticionRecibida.direccion + SEPARADOR + peticionRecibida.telefono + NEWLINE;
 
-	baseDeDatos->agregarRegistro(textoPeticion);
-
+	int existe = NOEXISTE;
+	if (baseDeDatos->agregarRegistro(textoPeticion) == -1) {
+		existe = EXISTE;
+		cout << "El Cliente " << peticionRecibida.mtype << " intentó agregar un registro ya existente." << endl;
+	}
+	if (responder(existe) == -1) {
+		cout << "Error al intentar responder al Cliente " << peticionRecibida.mtype << endl;
+		return -1;
+	}
 	return 0;
 }
-
-

@@ -1,11 +1,11 @@
 /*
- * Archivo.h
+ * BaseDeDatos.h
  *
  *  Created on: Nov 12, 2014
  *      Author: juan
  */
-#ifndef ARCHIVO_H_
-#define ARCHIVO_H_
+#ifndef BASEDEDATOS_H_
+#define BASEDEDATOS_H_
 
 #include <iostream>
 #include <unistd.h>
@@ -16,7 +16,7 @@
 #include "../Mecanismos_Concu/Mensajes/Mensaje.h"
 #include "../Constantes.h"
 
-class Archivo{
+class BaseDeDatos {
 
 private:
 	std::string ruta;
@@ -25,12 +25,12 @@ private:
 	Mensaje parsear(std::string registro);
 public:
 
-	Archivo(std::string ruta);
+	BaseDeDatos(std::string ruta);
 
 	int abrir();
 	int cerrar();
 
-	Mensaje buscarRegistro (std::string clave);
+	std::string obtenerRegistro(std::string clave);
 	int agregarRegistro (std::string regNuevo);
 
 };

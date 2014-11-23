@@ -5,10 +5,12 @@
 
 struct Mensaje {
 	long mtype;
-	int clave;
 	char nombre[LONG_MAX_NOMBRE];
 	char telefono[LONG_MAX_TELEFONO];
-	char direccion[LONG_MAX_DIR];
+	char direccion[LONG_MAX_DIRECCION];
+	int status; // Estado (Existe, No Existe)
+	int op;	// Operacion a realizar en la BD
+
 };
 
 #endif /* MENSAJES_H_ */

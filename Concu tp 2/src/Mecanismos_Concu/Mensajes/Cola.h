@@ -14,15 +14,21 @@ template <class T> class Cola {
 		int		id;
 
 	public:
-		Cola(const std::string& archivo, const char letra);
+		Cola();
+		void crear(const std::string& archivo, const char letra);
 		~Cola();
 		int escribir(const T& dato) const;
 		int leer(const int tipo, T* buffer) const;
 		int destruir() const;
-		bool existe();
+		bool existe(const std::string& archivo, const char letra);
 };
 
-template <class T> Cola<T>::Cola(const std::string& archivo, const char letra) {
+template <class T> Cola<T>::Cola() {
+	clave = 0;
+	id = 0;
+}
+
+template <class T> void Cola<T>::crear(const std::string& archivo, const char letra) {
 	this->clave = ftok(archivo.c_str(), letra);
 	if (this->clave == -1)
 		perror("Error en ftok");
@@ -46,8 +52,9 @@ template <class T> int Cola<T>::leer(const int tipo, T* buffer) const {
 	return msgrcv(this->id, static_cast<void *>(buffer), sizeof(T) - sizeof(long), tipo, 0);
 }
 
-template <class T> bool Cola<T>::existe() {
-	int msgid = msgget(this->clave, IPC_CREAT | IPC_EXCL | 0777);
+template <class T> bool Cola<T>::existe(const std::string& archivo, const char letra) {
+	int clave = ftok(archivo.c_str(), letra);
+	int msgid = msgget(clave, IPC_CREAT | IPC_EXCL | 0777);
 	if (msgid == -1)
 		return (EEXIST == errno);
 
