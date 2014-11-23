@@ -8,7 +8,7 @@ using namespace std;
 
 Cliente::Cliente() {
 	colaEnvios = new Cola<Mensaje>();
-	colaArrivos = new Cola<Mensaje>();
+	colaArribos = new Cola<Mensaje>();
 	id = getpid();
 }
 
@@ -18,10 +18,10 @@ Cliente::~Cliente() {
 		delete colaEnvios;
 		colaEnvios = NULL;
 	}
-	if (colaArrivos != NULL) {
+	if (colaArribos != NULL) {
 		// La cola la libera el Servidor
-		delete colaArrivos;
-		colaArrivos = NULL;
+		delete colaArribos;
+		colaArribos = NULL;
 	}
 }
 
@@ -29,8 +29,8 @@ bool Cliente::crear() {
 	// Si el Servidor fue lanzado, entonces creo las colas:
 	if (colaEnvios->existe(ARCHIVO_COLA, CLAVE_COLA)) {
 		colaEnvios->crear(ARCHIVO_COLA, CLAVE_COLA);
-		if (colaArrivos->existe(ARCHIVO_COLA, CLAVE_COLA)) {
-			colaArrivos->crear(ARCHIVO_COLA, CLAVE_COLA);
+		if (colaArribos->existe(ARCHIVO_COLA, CLAVE_COLA)) {
+			colaArribos->crear(ARCHIVO_COLA, CLAVE_COLA);
 			return true;
 		}
 		return false;
@@ -57,7 +57,7 @@ void Cliente::obtenerRegistro(const string nombre) {
 	*/
 
 	cout << "Esperando respuesta..." << endl;
-	if (colaArrivos->leer(id, &respuesta) == -1) {
+	if (colaArribos->leer(id, &respuesta) == -1) {
 		cout << "Error al intentar escuchar al Servidor" << endl;
 		return;
 	}
@@ -106,7 +106,7 @@ void Cliente::agregarRegistro(const string nombre, const string telefono, const 
 	cout << "   Telefono:  " << pedido.telefono << endl;
 
 	cout << "Esperando confirmacion..." << endl;
-	if (colaArrivos->leer(id, &respuesta) == -1) {
+	if (colaArribos->leer(id, &respuesta) == -1) {
 		cout << "Error al intentar escuchar al Servidor" << endl;
 		return;
 	}

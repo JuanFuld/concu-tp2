@@ -10,7 +10,7 @@ using namespace std;
 
 class Servidor {
 	private:
-		Cola<Mensaje>* colaArrivos;
+		Cola<Mensaje>* colaArribos;
 		Cola<Mensaje>* colaEnvios;
 		Mensaje peticionRecibida;
 		Mensaje respuesta;

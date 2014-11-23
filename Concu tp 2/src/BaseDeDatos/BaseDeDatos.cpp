@@ -57,4 +57,8 @@ int BaseDeDatos::agregarRegistro(std::string regNuevo) {
 	return -1;
 }
 
+BaseDeDatos::~BaseDeDatos() {
+	ruta = "";
+	cerrar();
+}
 

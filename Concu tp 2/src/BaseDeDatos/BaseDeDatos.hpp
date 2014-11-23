@@ -22,11 +22,10 @@ private:
 	std::string ruta;
 	std::fstream arch;
 
-	Mensaje parsear(std::string registro);
 public:
 
 	BaseDeDatos(std::string ruta);
-
+	~BaseDeDatos();
 	int abrir();
 	int cerrar();
 

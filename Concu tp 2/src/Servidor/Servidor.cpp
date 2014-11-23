@@ -5,9 +5,9 @@
 using namespace std;
 
 Servidor::Servidor() {
-	colaArrivos = new Cola<Mensaje>();
-	if (colaArrivos != NULL) {
-		colaArrivos->crear(ARCHIVO_COLA,CLAVE_COLA);
+	colaArribos = new Cola<Mensaje>();
+	if (colaArribos != NULL) {
+		colaArribos->crear(ARCHIVO_COLA,CLAVE_COLA);
 	}
 	colaEnvios = new Cola<Mensaje>();
 	if (colaEnvios != NULL) {
@@ -18,10 +18,10 @@ Servidor::Servidor() {
 }
 
 Servidor::~Servidor() {
-	if (colaArrivos != NULL) {
-		colaArrivos->destruir(); // Solo el Servidor la destruye
-		delete colaArrivos;
-		colaArrivos = NULL;
+	if (colaArribos != NULL) {
+		colaArribos->destruir(); // Solo el Servidor la destruye
+		delete colaArribos;
+		colaArribos = NULL;
 	}
 	if (colaEnvios != NULL) {
 		colaEnvios->destruir(); // Solo el Servidor la destruye
@@ -40,7 +40,7 @@ int Servidor::procesarPedido() {
 
 	std::cout << "Esperando pedido..." << endl;
 
-	if (colaArrivos->leer(0, &peticionRecibida) == -1) {
+	if (colaArribos->leer(0, &peticionRecibida) == -1) {
 		std::cout << "Error al leer en la cola" << std::endl;
 		return -1;
 	}

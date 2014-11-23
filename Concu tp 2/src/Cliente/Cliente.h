@@ -10,7 +10,7 @@ class Cliente {
 	private:
 		int id;
 		Cola<Mensaje>* colaEnvios;
-		Cola<Mensaje>* colaArrivos;
+		Cola<Mensaje>* colaArribos;
 		Mensaje pedido; // que envia
 		Mensaje respuesta; // que recibe
 	public:
