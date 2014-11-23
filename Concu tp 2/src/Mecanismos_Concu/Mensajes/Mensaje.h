@@ -1,7 +1,7 @@
 #ifndef MENSAJES_H_
 #define MENSAJES_H_
 
-#include "../Constantes.h"
+#include "../../Constantes.h"
 
 struct Mensaje {
 	long mtype;
