@@ -5,15 +5,15 @@
 
 static const std::string ARCHIVO_COLA = "/etc";
 
-static const int CLAVE_COLA = 10; 
+static const int CLAVE_COLA_1 = 10;
+static const int CLAVE_COLA_2 = 12;
 
 static const int OP_PEDIDO = 1;
 static const int OP_INGRESO = 2;
 static const int OP_FINAL = 3;
 
-//Dejar ID de CONSULTA menor al de AGREGAR!
-static const int CONSULTA = 1; //tipo msj para pedir informacion
-static const int AGREGADO = 2; //tipo msj para agregar un registro a la base de datos
+static const int CONSULTA = 1; //op para pedir informacion
+static const int AGREGADO = 2; //op para agregar un registro a la base de datos
 static const int RESPUESTA = 0;
 static const int AGREGADO_OK = 3;
 static const int AGREGADO_NOK = 3;

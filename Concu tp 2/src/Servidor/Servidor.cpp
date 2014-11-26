@@ -7,14 +7,14 @@ using namespace std;
 Servidor::Servidor() {
 	colaArribos = new Cola<Mensaje>();
 	if (colaArribos != NULL) {
-		colaArribos->crear(ARCHIVO_COLA,CLAVE_COLA);
+		colaArribos->crear(ARCHIVO_COLA,CLAVE_COLA_1);
 	}
 	colaEnvios = new Cola<Mensaje>();
 	if (colaEnvios != NULL) {
-		colaEnvios->crear(ARCHIVO_COLA,CLAVE_COLA);
+		colaEnvios->crear(ARCHIVO_COLA,CLAVE_COLA_2);
 	}
 	baseDeDatos = new BaseDeDatos(RUTA_BASE_DE_DATOS);
-	// TODO aca y en el cliente ver si, o como, inicializar los mensajes
+
 }
 
 Servidor::~Servidor() {
@@ -41,7 +41,7 @@ int Servidor::procesarPedido() {
 	std::cout << "Esperando pedido..." << endl;
 
 	if (colaArribos->leer(0, &peticionRecibida) == -1) {
-		std::cout << "Error al leer en la cola" << std::endl;
+		std::cout << "Error al leer en la cola o interrupcion del servidor" << std::endl;
 		return -1;
 	}
 
@@ -64,7 +64,7 @@ int Servidor::procesarPedido() {
 }
 
 void Servidor::parsear(string registro) {
-	//parsea el registro recibido
+	//parsea el registro recibido y carga el resultado en this.respuesta
 	string tel, dir;
 
 	int posSeparador = registro.find(SEPARADOR);
@@ -119,10 +119,7 @@ int Servidor::responder(int existe) {
 int Servidor::procesarAgregado() {
 	cout << "Recibida operación AGREGADO del Cliente: " << peticionRecibida.mtype << endl;
 	cout << "Mensaje recibido: "<< endl;
-/*	cout << "    mtype:  " << peticionRecibida.mtype << endl;
-	cout << "    op:     " << peticionRecibida.op << endl;
-	cout << "    status: " << peticionRecibida.status << endl;
-*/
+
 	cout << "    Nombre: " << peticionRecibida.nombre << endl;
 	cout << "    Dir:    " << peticionRecibida.direccion << endl;
 	cout << "    Tel:    " << peticionRecibida.telefono << endl;

@@ -15,11 +15,11 @@ int main (int argc, char** argv) {
 
 	Servidor* servidor = new Servidor();
 	if (servidor == NULL) {
-		cout << "No se pudo crear el Servidor." << endl;
+		cout << "No se pudo crear el servidor." << endl;
 		return 1;
 	}
 
-	cout << "Servidor Iniciado." << endl;
+	cout << "Servidor iniciado." << endl;
 
 	while(sigint_handler.getGracefulQuit() == 0) {
 		servidor->procesarPedido();

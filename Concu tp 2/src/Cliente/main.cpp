@@ -19,7 +19,6 @@ bool longitudValida(string str, unsigned int longMax) {
 int tomarOperacion(int &operacion) {
 	string op;
 	do {
-		cout << "Cliente: " << getpid() << endl;
 		cout << "Ingrese la operacion a realizar" << endl;
 		cout << OP_PEDIDO << ": Pedido de informacion" << endl;
 		cout << OP_INGRESO << ": Ingreso de datos" << endl;
@@ -40,16 +39,20 @@ string tomarDatos(string mensaje) {
 
 int main(int argc, char** argv) {
 	Cliente* cliente = new Cliente();
+
 	if (cliente == NULL) {
 		cout << "No se pudo crear el cliente." << endl;
 		return 1;
 	}
+
 	if (!cliente->crear()) {
-		cout << "El Servidor no ha sido abierto aún. Inténtelo más tarde." << endl;
+		cout << "El servidor no ha sido abierto aún. Inténtelo más tarde." << endl;
 		delete cliente;
 		cliente = NULL;
 		return 1;
 	}
+
+	cout << "Es usted el cliente: " << getpid() << endl;
 
 	int operacion = 0;
 	string nombre = "";
@@ -87,6 +90,7 @@ int main(int argc, char** argv) {
 		}
 		tomarOperacion(operacion);
 	}
+
 	cout << "Cliente finalizado." << endl;
 	delete cliente;
 	cliente = NULL;

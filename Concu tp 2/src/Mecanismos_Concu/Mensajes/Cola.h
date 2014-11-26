@@ -16,6 +16,7 @@ template <class T> class Cola {
 	public:
 		Cola();
 		void crear(const std::string& archivo, const char letra);
+		bool obtenerExistente(const std::string& archivo, const char letra);
 		~Cola();
 		int escribir(const T& dato) const;
 		int leer(const int tipo, T* buffer) const;
@@ -33,9 +34,24 @@ template <class T> void Cola<T>::crear(const std::string& archivo, const char le
 	if (this->clave == -1)
 		perror("Error en ftok");
 
-	this->id = msgget(this->clave, 0777 | IPC_CREAT);
+	this->id = msgget(this->clave, 0777 | IPC_CREAT | IPC_EXCL);
 	if (this->id == -1)
 		perror("Error en msgget");
+}
+
+template <class T> bool Cola<T>::obtenerExistente(const std::string& archivo, const char letra) {
+	this->clave = ftok(archivo.c_str(), letra);
+	if (this->clave == -1){
+		perror("Error en ftok");
+		return false;
+	}
+
+	//sin IPC_CREAT falla si no existe
+	this->id = msgget(this->clave, 0777);
+	if (this->id == -1)
+		return false;
+
+	return true;
 }
 
 template <class T> Cola<T>::~Cola() { }
@@ -50,17 +66,6 @@ template <class T> int Cola<T>::escribir(const T& dato) const {
 
 template <class T> int Cola<T>::leer(const int tipo, T* buffer) const {
 	return msgrcv(this->id, static_cast<void *>(buffer), sizeof(T) - sizeof(long), tipo, 0);
-}
-
-template <class T> bool Cola<T>::existe(const std::string& archivo, const char letra) {
-	int clave = ftok(archivo.c_str(), letra);
-	int msgid = msgget(clave, IPC_CREAT | IPC_EXCL | 0777);
-	if (msgid == -1)
-		return (EEXIST == errno);
-
-	// Si la pudo crear, la elimino, no deberia ser creada (?):
-	msgctl(msgid, IPC_RMID, NULL);
-	return false;
 }
 
 #endif /* COLA_H_ */

@@ -26,18 +26,22 @@ Cliente::~Cliente() {
 }
 
 bool Cliente::crear() {
-	// Si el Servidor fue lanzado, entonces creo las colas:
-	if (colaEnvios->existe(ARCHIVO_COLA, CLAVE_COLA)) {
-		colaEnvios->crear(ARCHIVO_COLA, CLAVE_COLA);
-		if (colaArribos->existe(ARCHIVO_COLA, CLAVE_COLA)) {
-			colaArribos->crear(ARCHIVO_COLA, CLAVE_COLA);
-			return true;
-		}
+	// Si el Servidor no fue lanzado, las colas no existen
+	bool creada =false;
+
+	creada = colaEnvios->obtenerExistente(ARCHIVO_COLA, CLAVE_COLA_1);
+	if (creada == false){
+		cout << "El servidor no esta corriendo, intentelo mas tarde." << endl;
 		return false;
 	}
 
-	// Si el Servidor no fue lanzado, las colas no existen
-	return false;
+	creada = colaArribos->obtenerExistente(ARCHIVO_COLA, CLAVE_COLA_2);
+	if (creada == false){
+		cout << "El servidor no esta corriendo, intentelo mas tarde." << endl;
+		return false;
+	}
+
+	return true;
 }
 
 void Cliente::obtenerRegistro(const string nombre) {
@@ -50,11 +54,6 @@ void Cliente::obtenerRegistro(const string nombre) {
 		return;
 	}
 	cout << "Consulta enviada" << endl;
-	/*
-	cout << "   mtype:  " << pedido.mtype << endl;
-	cout << "   op:     " << pedido.op << endl;
-	cout << "   Nombre: " << pedido.nombre << endl;
-	*/
 
 	cout << "Esperando respuesta..." << endl;
 	if (colaArribos->leer(id, &respuesta) == -1) {
@@ -73,11 +72,7 @@ void Cliente::obtenerRegistro(const string nombre) {
 	}
 
 	cout << "Mensaje recibido:" << endl;
-	/*
-	cout << "   mtype:     " << respuesta.mtype << endl;
-	cout << "   op:        " << respuesta.op << endl;
-	cout << "   status:    " << respuesta.status << endl;
-	*/
+
 	cout << "   Nombre:    " << respuesta.nombre << endl;
 	cout << "   Direccion: " <<	respuesta.direccion << endl;
 	cout << "   Telefono:  " << respuesta.telefono << endl;
@@ -96,11 +91,7 @@ void Cliente::agregarRegistro(const string nombre, const string telefono, const 
 	}
 
 	cout << "Mensaje enviado:" << endl;
-	/*
-	cout << "   mtype:     " << pedido.mtype << endl;
-	cout << "   op:        " << pedido.op << endl;
-	cout << "   status:    " << pedido.status << endl;
-	*/
+
 	cout << "   Nombre:    " << pedido.nombre << endl;
 	cout << "   Direccion: " <<	pedido.direccion << endl;
 	cout << "   Telefono:  " << pedido.telefono << endl;
@@ -118,7 +109,7 @@ void Cliente::agregarRegistro(const string nombre, const string telefono, const 
 
 	if (respuesta.status == EXISTE) {
 		cout << "No se pudo agregar el nuevo registro. Causa:" << endl;
-		cout << "   El registro ya se encuentra" << endl;
+		cout << "   El registro ya hay alguien en la base de datos con ese nombre" << endl;
 		return;
 	}
 
