@@ -83,12 +83,8 @@ int Servidor::procesarConsulta() {
 
 	cout << "Recibida operación CONSULTA del Cliente: " << peticionRecibida.mtype << endl;
 	cout << "Mensaje recibido: "<< endl;
-/*	cout << "    mtype:  " << peticionRecibida.mtype << endl;
-	cout << "    op:     " << peticionRecibida.op << endl;
-	cout << "    status: " << peticionRecibida.status << endl;*/
+
 	cout << "    Nombre: " << peticionRecibida.nombre << endl;
-/*	cout << "    Dir:    " << peticionRecibida.direccion << endl;
-	cout << "    Tel:    " << peticionRecibida.telefono << endl;*/
 
 	//obtiene la informacion requerida de la base de datos
 	int existe = NOEXISTE;
@@ -123,7 +119,7 @@ int Servidor::procesarAgregado() {
 	cout << "    Nombre: " << peticionRecibida.nombre << endl;
 	cout << "    Dir:    " << peticionRecibida.direccion << endl;
 	cout << "    Tel:    " << peticionRecibida.telefono << endl;
-
+	//arma el registro a agregar
 	string textoPeticion = peticionRecibida.nombre + SEPARADOR +
 			peticionRecibida.direccion + SEPARADOR + peticionRecibida.telefono + NEWLINE;
 
@@ -132,6 +128,7 @@ int Servidor::procesarAgregado() {
 		existe = EXISTE;
 		cout << "El Cliente " << peticionRecibida.mtype << " intentó agregar un registro ya existente." << endl;
 	}
+
 	if (responder(existe) == -1) {
 		cout << "Error al intentar responder al Cliente " << peticionRecibida.mtype << endl;
 		return -1;

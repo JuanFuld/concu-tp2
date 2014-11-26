@@ -49,7 +49,7 @@ int main(int argc, char** argv) {
 		cout << "El servidor no ha sido abierto aún. Inténtelo más tarde." << endl;
 		delete cliente;
 		cliente = NULL;
-		return 1;
+		return 2;
 	}
 
 	cout << "Es usted el cliente: " << getpid() << endl;
